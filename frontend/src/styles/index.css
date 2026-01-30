@@ -1,7 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap')
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap")
 layer(base);
 
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -116,6 +116,22 @@ layer(base);
   }
 }
 
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.chat-height,
+.inbox-height {
+  height: calc(100vh - 8.125rem);
+}
+
 @utility box {
   input#checkboxLabel:checked ~ & span {
     @apply opacity-100;
@@ -131,5 +147,145 @@ layer(base);
 @layer components {
   input[type="checkbox"]:checked ~ label span svg {
     @apply inline-flex;
+  }
+}
+
+.tableCheckbox:checked ~ div {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary);
+}
+
+/* =======================
+   APEX CHARTS
+======================= */
+
+.apexcharts-legend-text {
+  color: var(--color-body-color);
+}
+
+.apexcharts-text {
+  fill: var(--color-body-color);
+}
+
+.apexcharts-xcrosshairs {
+  fill: var(--color-stroke-stroke);
+}
+
+.apexcharts-gridline {
+  stroke: var(--color-stroke-stroke);
+}
+
+.apexcharts-legend-series {
+  display: inline-flex;
+  gap: 0.375rem;
+}
+
+.apexcharts-tooltip-series-group {
+  padding-left: 0.375rem;
+}
+
+/* =======================
+   FLATPICKR
+======================= */
+
+.flatpickr-wrapper {
+  width: 100%;
+}
+
+.flatpickr-calendar {
+  padding: 1.5rem;
+}
+
+.flatpickr-day.inRange {
+  box-shadow:
+    -5px 0 0 #f3f4f6,
+    5px 0 0 #f3f4f6;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #ffffff;
+}
+
+/* =======================
+   MAP CONTROLS
+======================= */
+
+.map-btn .jvm-zoom-btn {
+  border: 1px solid var(--color-stroke-stroke);
+  background-color: #ffffff;
+  color: var(--color-body-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.875rem;
+  width: 1.875rem;
+  border-radius: 0.375rem;
+  font-size: 1.25rem;
+}
+
+/* =======================
+   TASK CHECKBOX
+======================= */
+
+.taskCheckbox:checked ~ .box span {
+  opacity: 1;
+}
+
+.taskCheckbox:checked ~ p {
+  text-decoration: line-through;
+}
+
+.taskCheckbox:checked ~ .box {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary);
+}
+
+/* =======================
+   INPUTS
+======================= */
+
+input[type="search"]::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+.custom-input-date::-webkit-calendar-picker-indicator {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 20px;
+}
+
+/* =======================
+   CLOAK
+======================= */
+
+[x-cloak] {
+  display: none !important;
+}
+
+@layer base {
+  :root {
+    --color-body-color: #1f2937;
+    --color-bg: #f0f5f7;
+    --color-primary: #2563eb;
+    --color-stroke-stroke: #e5e7eb;
+    --color-card-bg: #ffffff;
+  }
+
+  .dark {
+    --color-body-color: #e5e7eb;
+    --color-bg: #0f172a;
+    --color-primary: #60a5fa;
+    --color-stroke-stroke: #334155;
+    --color-card-bg: #020617;
+  }
+
+  body {
+    font-family: "Satoshi", sans-serif;
+    color: var(--color-body-color);
+    background-color: var(--color-bg);
   }
 }
