@@ -1,15 +1,23 @@
+"use client";
+
+import { useAuth } from "@/context/AuthContext";
+
 const PricingBox = (props: {
   price: string;
   duration: string;
   packageName: string;
   subtitle: string;
   children: React.ReactNode;
+  onEnroll?: () => void;
 }) => {
-  const { price, duration, packageName, subtitle, children } = props;
+  const { price, duration, packageName, subtitle, children, onEnroll } = props;
+  const { openModal, user } = useAuth();
+
+  const isCurrentPlan = user?.plan === packageName;
 
   return (
     <div className="w-full">
-      <div className="shadow-three hover:shadow-one dark:bg-gray-dark dark:shadow-two dark:hover:shadow-gray-dark relative z-10 rounded-xs bg-white px-8 py-10">
+      <div className="shadow-three hover:shadow-one dark:bg-gray-dark dark:shadow-two dark:hover:shadow-gray-dark relative z-10 rounded-lg bg-white px-8 py-10">
         <div className="flex items-center justify-between">
           <h3 className="price mb-2 text-[32px] font-bold text-black dark:text-white">
             $<span className="amount">{price}</span>
@@ -23,8 +31,21 @@ const PricingBox = (props: {
         </div>
         <p className="text-body-color mb-7 text-base">{subtitle}</p>
         <div className="border-body-color/10 mb-8 border-b pb-8 dark:border-white/10">
-          <button className="bg-primary/80 hover:shadow-signUp flex w-full items-center justify-center rounded-xs p-3 text-base font-semibold text-white transition duration-300 ease-in-out">
-            Start Free Trial
+          <button
+            disabled={isCurrentPlan}
+            onClick={() => {
+              if (user) {
+                if (!isCurrentPlan && onEnroll) onEnroll();
+              } else {
+                openModal("signup");
+              }
+            }}
+            className={`flex w-full items-center justify-center rounded-lg p-3 text-base font-bold text-white transition duration-300 ease-in-out ${isCurrentPlan
+                ? "bg-primary/50 cursor-default shadow-none"
+                : "bg-primary/80 hover:bg-primary shadow-submit"
+              }`}
+          >
+            {user ? (isCurrentPlan ? "Current Plan" : "Enroll Now") : "Start Free Trial"}
           </button>
         </div>
         <div>{children}</div>

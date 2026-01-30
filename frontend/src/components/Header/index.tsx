@@ -6,6 +6,9 @@ import { useEffect, useState } from "react";
 import ThemeToggler from "./ThemeToggler";
 import menuData from "./menuData";
 
+
+import { useAuth } from "@/context/AuthContext";
+
 const Header = () => {
   // Navbar toggle
   const [navbarOpen, setNavbarOpen] = useState(false);
@@ -24,7 +27,8 @@ const Header = () => {
   };
   useEffect(() => {
     window.addEventListener("scroll", handleStickyNavbar);
-  });
+    return () => window.removeEventListener("scroll", handleStickyNavbar);
+  }, []);
 
   // submenu handler
   const [openIndex, setOpenIndex] = useState(-1);
@@ -37,6 +41,10 @@ const Header = () => {
   };
 
   const usePathName = usePathname();
+
+  // Auth Context
+  const { openModal, user, logout } = useAuth();
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
   return (
     <>
@@ -54,20 +62,11 @@ const Header = () => {
                 className={`header-logo block w-full ${sticky ? "py-5 lg:py-2" : "py-8"
                   } `}
               >
-                <Image
-                  src="/images/logo/logo-2.svg"
-                  alt="logo"
-                  width={140}
-                  height={30}
-                  className="w-full dark:hidden"
-                />
-                <Image
-                  src="/images/logo/logo.svg"
-                  alt="logo"
-                  width={140}
-                  height={30}
-                  className="hidden w-full dark:block"
-                />
+                <div className="flex items-center">
+                  <span className="text-2xl font-bold text-black dark:text-white">
+                    Praedico
+                  </span>
+                </div>
               </Link>
             </div>
             <div className="flex w-full items-center justify-between px-4">
@@ -151,22 +150,79 @@ const Header = () => {
                 </nav>
               </div>
               <div className="flex items-center justify-end pr-16 lg:pr-0">
-                <Link
-                  href="/signin"
-                  className="text-dark hidden px-7 py-3 text-base font-medium hover:opacity-70 md:block dark:text-white"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  href="/signup"
-                  className="ease-in-up shadow-btn hover:shadow-btn-hover bg-primary hover:bg-primary/90 hidden rounded-xs px-8 py-3 text-base font-medium text-white transition duration-300 md:block md:px-9 lg:px-6 xl:px-9"
-                >
-                  Sign Up
-                </Link>
-                <div>
+                {!user ? (
+                  <>
+                    <button
+                      onClick={() => openModal("signin")}
+                      className="text-dark hidden px-7 py-3 text-base font-medium hover:opacity-70 md:block dark:text-white"
+                    >
+                      Sign In
+                    </button>
+                    <button
+                      onClick={() => openModal("signup")}
+                      className="ease-in-up shadow-btn hover:shadow-btn-hover bg-primary hover:bg-primary/90 hidden rounded-xs px-8 py-3 text-base font-medium text-white transition duration-300 md:block md:px-9 lg:px-6 xl:px-9"
+                    >
+                      Sign Up
+                    </button>
+                  </>
+                ) : (
+                  <div className="relative ml-4">
+                    <button
+                      onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                      className="flex items-center gap-2 rounded-full border border-stroke bg-gray-1 px-3 py-1.5 transition-all hover:bg-gray-2 dark:border-transparent dark:bg-white/10 dark:hover:bg-white/20"
+                    >
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">
+                        {user.name.charAt(0).toUpperCase()}
+                      </div>
+                      <span className="hidden text-sm font-semibold text-dark md:block dark:text-white">
+                        {user.name.split(" ")[0]}
+                      </span>
+                      <svg
+                        className={`transition-transform duration-200 ${profileDropdownOpen ? "rotate-180" : ""}`}
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path d="M2 4L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </button>
+
+                    {profileDropdownOpen && (
+                      <>
+                        <div
+                          className="fixed inset-0 z-20"
+                          onClick={() => setProfileDropdownOpen(false)}
+                        ></div>
+                        <div className="dark:bg-dark absolute right-0 mt-2 w-48 rounded-lg border border-stroke bg-white py-2 shadow-lg dark:border-white/10 dark:bg-gray-dark z-30">
+                          <div className="border-b border-stroke px-4 py-2 dark:border-white/10">
+                            <p className="text-xs text-body-color dark:text-body-color-dark">Signed in as</p>
+                            <p className="truncate text-sm font-bold text-dark dark:text-white">{user.email}</p>
+                          </div>
+                          <Link
+                            href="/profile"
+                            className="block px-4 py-2 text-sm text-dark hover:bg-gray-1 dark:text-white dark:hover:bg-white/10"
+                            onClick={() => setProfileDropdownOpen(false)}
+                          >
+                            My Profile
+                          </Link>
+                          <button
+                            onClick={() => {
+                              logout();
+                              setProfileDropdownOpen(false);
+                            }}
+                            className="flex w-full px-4 py-2 text-left text-sm font-medium text-red-500 hover:bg-gray-1 dark:hover:bg-white/10"
+                          >
+                            Logout
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
+                <div className="ml-4">
                   <ThemeToggler />
                 </div>
-
               </div>
             </div>
           </div>

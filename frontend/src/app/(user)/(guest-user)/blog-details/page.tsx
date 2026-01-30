@@ -5,9 +5,8 @@ import Image from "next/image";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Blog Details Page | Free Next.js Template for Startup and SaaS",
-  description: "This is Blog Details Page for Startup Nextjs Template",
-  // other metadata
+  title: "Blog Details | Praedico Global Research",
+  description: "Detailed insights and expert analysis on the latest market trends and financial strategies.",
 };
 
 const BlogDetailsPage = () => {
@@ -36,7 +35,7 @@ const BlogDetailsPage = () => {
                       </div>
                       <div className="w-full">
                         <span className="text-body-color mb-1 text-base font-medium">
-                          By <span>Musharof Chy</span>
+                          By <span>Praedico Research Team</span>
                         </span>
                       </div>
                     </div>

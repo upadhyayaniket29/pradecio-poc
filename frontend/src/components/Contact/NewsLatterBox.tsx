@@ -3,13 +3,43 @@
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
+import { useAuth } from "@/context/AuthContext";
+import { subscribeNewsletter } from "@/services/apiService";
+
 const NewsLatterBox = () => {
   const { theme } = useTheme();
+  const { setNotification } = useAuth();
   const [mounted, setMounted] = useState(false);
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) {
+      setNotification("Please enter a valid email address.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await subscribeNewsletter(email);
+      if (res.success) {
+        setNotification("Thank you for subscribing to our newsletter!");
+        setEmail("");
+        setName("");
+      } else {
+        setNotification(res.message || "Subscription failed. Please try again.");
+      }
+    } catch (err) {
+      setNotification("Something went wrong. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="shadow-three dark:bg-gray-dark relative z-10 rounded-xs bg-white p-8 sm:p-11 lg:p-8 xl:p-11">
@@ -17,31 +47,37 @@ const NewsLatterBox = () => {
         Subscribe to receive future updates
       </h3>
       <p className="border-body-color/25 text-body-color mb-11 border-b pb-11 text-base leading-relaxed dark:border-white/25">
-        Lorem ipsum dolor sited Sed ullam corper consectur adipiscing Mae ornare
-        massa quis lectus.
+        Stay updated with the latest market predictions and insights from Praedico Global Research.
       </p>
-      <div>
+      <form onSubmit={handleSubscribe}>
         <input
           type="text"
           name="name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
           placeholder="Enter your name"
           className="border-stroke text-body-color focus:border-primary dark:text-body-color-dark dark:shadow-two dark:focus:border-primary mb-4 w-full rounded-xs border bg-[#f8f8f8] px-6 py-3 text-base outline-hidden dark:border-transparent dark:bg-[#2C303B] dark:focus:shadow-none"
         />
         <input
           type="email"
           name="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
           placeholder="Enter your email"
           className="border-stroke text-body-color focus:border-primary dark:text-body-color-dark dark:shadow-two dark:focus:border-primary mb-4 w-full rounded-xs border bg-[#f8f8f8] px-6 py-3 text-base outline-hidden dark:border-transparent dark:bg-[#2C303B] dark:focus:shadow-none"
         />
-        <input
+        <button
           type="submit"
-          value="Subscribe"
-          className="bg-primary shadow-submit hover:bg-primary/90 dark:shadow-submit-dark mb-5 flex w-full cursor-pointer items-center justify-center rounded-xs px-9 py-4 text-base font-medium text-white duration-300"
-        />
+          disabled={loading}
+          className="bg-primary shadow-submit hover:bg-primary/90 dark:shadow-submit-dark mb-5 flex w-full cursor-pointer items-center justify-center rounded-xs px-9 py-4 text-base font-medium text-white duration-300 disabled:opacity-50"
+        >
+          {loading ? "Subscribing..." : "Subscribe"}
+        </button>
         <p className="text-body-color dark:text-body-color-dark text-center text-base leading-relaxed">
           No spam guaranteed, So please don’t send any spam mail.
         </p>
-      </div>
+      </form>
 
       <div>
         <span className="absolute top-7 left-2">

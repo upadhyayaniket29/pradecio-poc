@@ -7,9 +7,8 @@ import Image from "next/image";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Blog Details Page | Free Next.js Template for Startup and SaaS",
-  description: "This is Blog Details Page for Startup Nextjs Template",
-  // other metadata
+  title: "Blog Details | Praedico Global Research",
+  description: "Detailed insights and expert analysis on the latest market trends and financial strategies.",
 };
 
 const BlogSidebarPage = () => {
@@ -38,7 +37,7 @@ const BlogSidebarPage = () => {
                       </div>
                       <div className="w-full">
                         <span className="text-body-color mb-1 text-base font-medium">
-                          By <span> Musharof Chy</span>
+                          By <span>Praedico Research Team</span>
                         </span>
                       </div>
                     </div>
@@ -425,7 +424,7 @@ const BlogSidebarPage = () => {
                       href="#0"
                       className="text-body-color hover:text-primary mb-3 inline-block text-base font-medium"
                     >
-                      Startup
+                      Research
                     </a>
                   </li>
                   <li>
@@ -454,7 +453,7 @@ const BlogSidebarPage = () => {
                   <TagButton text="Themes" />
                   <TagButton text="UI Kit" />
                   <TagButton text="Tailwind" />
-                  <TagButton text="Startup" />
+                  <TagButton text="Investing" />
                   <TagButton text="Business" />
                 </div>
               </div>

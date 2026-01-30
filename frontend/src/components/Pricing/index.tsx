@@ -1,11 +1,35 @@
 "use client";
 import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 import SectionTitle from "../Common/SectionTitle";
 import OfferList from "./OfferList";
 import PricingBox from "./PricingBox";
+import EnrollmentModal from "./EnrollmentModal";
 
 const Pricing = () => {
   const [isMonthly, setIsMonthly] = useState(true);
+  const [isEnrollmentOpen, setIsEnrollmentOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState({ name: "", price: "" });
+  const { setNotification, enroll } = useAuth();
+
+  const handleEnroll = (name: string, price: string) => {
+    setSelectedPlan({ name, price });
+    setIsEnrollmentOpen(true);
+  };
+
+  const handleConfirmEnroll = async () => {
+    try {
+      await enroll({
+        plan: selectedPlan.name,
+        price: selectedPlan.price,
+        duration: isMonthly ? "mo" : "yr"
+      });
+      setIsEnrollmentOpen(false);
+      setNotification(`Successfully enrolled in ${selectedPlan.name} plan!`);
+    } catch (error) {
+      // Notification is handled in AuthContext
+    }
+  };
 
   return (
     <section id="pricing" className="relative z-10 py-16 md:py-20 lg:py-28">
@@ -22,8 +46,8 @@ const Pricing = () => {
             <span
               onClick={() => setIsMonthly(true)}
               className={`${isMonthly
-                  ? "pointer-events-none text-primary"
-                  : "text-dark dark:text-white"
+                ? "pointer-events-none text-primary"
+                : "text-dark dark:text-white"
                 } mr-4 cursor-pointer text-base font-semibold`}
             >
               Monthly
@@ -45,8 +69,8 @@ const Pricing = () => {
             <span
               onClick={() => setIsMonthly(false)}
               className={`${isMonthly
-                  ? "text-dark dark:text-white"
-                  : "pointer-events-none text-primary"
+                ? "text-dark dark:text-white"
+                : "pointer-events-none text-primary"
                 } ml-4 cursor-pointer text-base font-semibold`}
             >
               Yearly
@@ -60,6 +84,7 @@ const Pricing = () => {
             price={isMonthly ? "0" : "0"}
             duration={isMonthly ? "mo" : "yr"}
             subtitle="Perfect for beginners to start their virtual trading journey."
+            onEnroll={() => handleEnroll("Free", isMonthly ? "0" : "0")}
           >
             <OfferList text="Virtual Trading (NSE Stocks)" status="active" />
             <OfferList text="Daily Performance Reports" status="active" />
@@ -73,6 +98,9 @@ const Pricing = () => {
             price={isMonthly ? "499" : "4999"}
             duration={isMonthly ? "mo" : "yr"}
             subtitle="Advanced tools for serious traders to refine their strategies."
+            onEnroll={() =>
+              handleEnroll("Pro", isMonthly ? "499" : "4999")
+            }
           >
             <OfferList text="All Free Features" status="active" />
             <OfferList text="Technical Indicators" status="active" />
@@ -86,6 +114,9 @@ const Pricing = () => {
             price={isMonthly ? "999" : "9999"}
             duration={isMonthly ? "mo" : "yr"}
             subtitle="The ultimate package with AI-driven insights and F&O data."
+            onEnroll={() =>
+              handleEnroll("Elite", isMonthly ? "999" : "9999")
+            }
           >
             <OfferList text="All Pro Features" status="active" />
             <OfferList text="AI Stock Predictions (80-90% accuracy)" status="active" />
@@ -151,6 +182,15 @@ const Pricing = () => {
           </defs>
         </svg>
       </div>
+
+      <EnrollmentModal
+        isOpen={isEnrollmentOpen}
+        onClose={() => setIsEnrollmentOpen(false)}
+        planName={selectedPlan.name}
+        price={selectedPlan.price}
+        duration={isMonthly ? "mo" : "yr"}
+        onConfirm={handleConfirmEnroll}
+      />
     </section>
   );
 };
