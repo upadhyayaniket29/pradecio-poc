@@ -16,13 +16,16 @@ const contactController = async (req, res) => {
 
 const newsletterController = async (req, res) => {
     try {
+        console.log("Newsletter subscription request body:", req.body);
         const { email } = req.body;
         if (!email) {
+            console.log("Email is missing in request");
             return res.status(400).json(new ApiError(400, "Email is required"));
         }
         const result = await guestService.subscribeNewsletter(email);
         res.status(201).json(new ApiResponse(201, result, "Subscribed successfully"));
     } catch (error) {
+        console.error("Newsletter subscription error:", error);
         const statusCode = error.message === 'Email already subscribed' ? 400 : 500;
         res.status(statusCode).json(new ApiError(statusCode, error.message));
     }

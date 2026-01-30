@@ -34,4 +34,26 @@ const sendResetEmail = async (email, token) => {
     return await transporter.sendMail(mailOptions);
 };
 
-module.exports = { sendResetEmail };
+const sendNewsletterWelcomeEmail = async (email) => {
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: 'Welcome to Praedico Global Research Newsletter',
+        html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e1e1e1; border-radius: 10px;">
+                <h2 style="color: #4a6cf7; text-align: center;">Welcome to the Community!</h2>
+                <p>Hello,</p>
+                <p>Thank you for subscribing to the Praedico Global Research newsletter!</p>
+                <p>You're now on the list to receive the latest market predictions, training updates, and trading solutions directly to your inbox.</p>
+                <p>Stay tuned for our next update.</p>
+                <p>Best regards,<br>The Praedico Team</p>
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+                <p style="font-size: 12px; color: #999; text-align: center;">© 2026 Praedico Global Research. All rights reserved.</p>
+            </div>
+        `
+    };
+
+    return await transporter.sendMail(mailOptions);
+};
+
+module.exports = { sendResetEmail, sendNewsletterWelcomeEmail };
