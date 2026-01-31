@@ -1,11 +1,25 @@
-"user client";
-import { useState } from "react";
+"use client";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import ClickOutside from "@/components/Admin/ClickOutside";
+import { useRouter } from "next/navigation";
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [user, setUser] = useState<{ email: string; name: string } | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      try {
+        setUser(JSON.parse(userData));
+      } catch (e) {
+        console.error("Failed to parse user data", e);
+      }
+    }
+  }, []);
 
   return (
     <ClickOutside onClick={() => setDropdownOpen(false)} className="relative">
@@ -16,9 +30,9 @@ const DropdownUser = () => {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            Thomas Anree
+            {user?.email || "Admin"}
           </span>
-          <span className="block text-xs">UX Designer</span>
+          <span className="block text-xs">Admin</span>
         </span>
 
         <span className="h-12 w-12 rounded-full">
@@ -129,7 +143,13 @@ const DropdownUser = () => {
               </Link>
             </li>
           </ul>
-          <button className="hover:text-primary flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out lg:text-base">
+          <button className="hover:text-primary flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out lg:text-base"
+          onClick={() => {
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            router.push("/admin/auth/signin");
+          }}
+          >
             <svg
               className="fill-current"
               width="22"

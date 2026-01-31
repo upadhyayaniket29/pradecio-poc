@@ -1,16 +1,47 @@
+"use client";
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Breadcrumb from "@/components/Admin/Breadcrumbs/Breadcrumb";
 import { Metadata } from "next";
 import DefaultLayout from "@/components/Admin/Layouts/DefaultLayout";
 
-export const metadata: Metadata = {
-  title: "Next.js SignIn Page | TailAdmin - Next.js Dashboard Template",
-  description: "This is Next.js Signin Page TailAdmin Dashboard Template",
-};
 
 const SignIn: React.FC = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        localStorage.setItem("token", data.data.token);
+        localStorage.setItem("user", JSON.stringify(data.data));
+        router.push("/admin/dashboard");
+      } else {
+        setError(data.message || "Login failed");
+      }
+    } catch (err) {
+      setError("Something went wrong. Please check your connection.");
+    }
+  };
+
   return (
     <>
       <Breadcrumb pageName="Sign In" />
@@ -173,7 +204,12 @@ const SignIn: React.FC = () => {
                 Sign In to Praedico
               </h2>
 
-              <form>
+              <form onSubmit={handleSubmit}>
+                {error && (
+                  <div className="mb-4 rounded-lg bg-red-100 p-4 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-400">
+                    {error}
+                  </div>
+                )}
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Email
@@ -183,6 +219,9 @@ const SignIn: React.FC = () => {
                       type="email"
                       placeholder="Enter your email"
                       className="border-stroke focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-full rounded-lg border bg-transparent py-4 pr-10 pl-6 text-black outline-none focus-visible:shadow-none dark:text-white"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
                     />
 
                     <span className="absolute top-4 right-4">
@@ -214,6 +253,9 @@ const SignIn: React.FC = () => {
                       type="password"
                       placeholder="6+ Characters, 1 Capital letter"
                       className="border-stroke focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-full rounded-lg border bg-transparent py-4 pr-10 pl-6 text-black outline-none focus-visible:shadow-none dark:text-white"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
                     />
 
                     <span className="absolute top-4 right-4">
